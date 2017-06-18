@@ -32,8 +32,8 @@ parser.add_argument('-static', action='store_true', default=False, help='fix the
 parser.add_argument('-device', type=int, default=-1, help='device to use for iterate data, -1 mean cpu [default: -1]')
 parser.add_argument('-no-cuda', action='store_true', default=False, help='disable the gpu' )
 # option
-parser.add_argument('-snapshot', type=str, default="./snapshot/2017-06-16_12-53-43/snapshot_steps8500.pt", help='filename of model snapshot [default: None]')
-parser.add_argument('-predict', type=str, default="You just make me so sad and I have to leave you .", help='predict the sentence given')
+parser.add_argument('-snapshot', type=str, default=None, help='filename of model snapshot [default: None]')
+parser.add_argument('-predict', type=str, default=None, help='predict the sentence given')
 parser.add_argument('-test', action='store_true', default=False, help='train or test')
 args = parser.parse_args()
 
@@ -54,21 +54,23 @@ def sst(text_field, label_field,  **kargs):
 
 # load MR dataset
 def mr(text_field, label_field, **kargs):
-    train_data, dev_data = mydatasets.MR.splits(text_field, label_field)
-    text_field.build_vocab(train_data, dev_data)
-    label_field.build_vocab(train_data, dev_data)
-    train_iter, dev_iter = data.Iterator.splits(
-                                (train_data, dev_data), 
-                                batch_sizes=(args.batch_size, len(dev_data)),
-                                **kargs)
-    return train_iter, dev_iter
+    train_data, dev_data, test_data = mydatasets.MR.splits(text_field, label_field)
+    text_field.build_vocab(train_data, dev_data, test_data)
+    label_field.build_vocab(train_data, dev_data, test_data)
+    train_iter, dev_iter, test_iter = data.BucketIterator.splits(
+                                        (train_data, dev_data, test_data),
+                                        batch_sizes=(args.batch_size,
+                                                     len(dev_data),
+                                                     len(test_data)),
+                                        **kargs)
+    return train_iter, dev_iter, test_iter
 
 
 # load data
 print("\nLoading data...")
 text_field = data.Field(lower=True)
 label_field = data.Field(sequential=False)
-train_iter, dev_iter = mr(text_field, label_field, device=-1, repeat=False)
+train_iter, dev_iter, test_iter = mr(text_field, label_field, device=-1, repeat=False)
 #train_iter, dev_iter, test_iter = sst(text_field, label_field, device=-1, repeat=False)
 
 
@@ -99,7 +101,7 @@ else :
 if args.predict is not None:
     label = train.predict(args.predict, cnn, text_field, label_field)
     print('\n[Text]  {}[Label] {}\n'.format(args.predict, label))
-elif args.test :
+elif args.test:
     try:
         train.eval(test_iter, cnn, args) 
     except Exception as e:

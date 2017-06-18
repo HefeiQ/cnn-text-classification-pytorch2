@@ -46,16 +46,16 @@ class MR(data.Dataset):
         super(MR, self).__init__(examples, fields, **kwargs)
 
     @classmethod
-    def splits(cls, text_field, label_field, path, shuffle=True, **kwargs):
+    def splits(cls, text_field, label_field, shuffle=True, **kwargs):
 
-        example1 = cls(text_field, label_field, path = 'train.', **kwargs).examples
-        example2 = cls(text_field, label_field, path = '', **kwargs).examples
-        example3 = cls(text_field, label_field, path = '', **kwargs).examples
+        example1 = cls(text_field, label_field, path = 'train.fmt', **kwargs).examples
+        example2 = cls(text_field, label_field, path = 'dev.fmt', **kwargs).examples
+        example3 = cls(text_field, label_field, path = 'test.fmt', **kwargs).examples
         if shuffle:
             random.shuffle(example1)
             random.shuffle(example2)
             random.shuffle(example3)
 
-        return (cls(text_field, label_field, examples=None),
-                cls(text_field, label_field, examples=None),
-                cls(text_field, label_field, examples=None))
+        return (cls(text_field, label_field, examples=example1),
+                cls(text_field, label_field, examples=example2),
+                cls(text_field, label_field, examples=example3))
