@@ -32,7 +32,7 @@ class MR(data.Dataset):
 
         if examples is None:
             examples = []
-            with open(os.path.join('data', path), encoding="utf-8", errors="ignore") as f1:
+            with open(os.path.join('data', path), encoding="utf-8", errors="ignore") as f:
                 for line in f.readlines():
                     #print(line)
                     if line[-2] == '0':
