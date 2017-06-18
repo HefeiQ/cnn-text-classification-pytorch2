@@ -32,7 +32,7 @@ class MR(data.Dataset):
 
         if examples is None:
             examples = []
-            with open(os.path.join('.data', path), encoding="utf-8", errors="ignore") as f:
+            with open(os.path.join('data', path), encoding="utf-8", errors="ignore") as f:
                 for line in f.readlines():
                     #print(line)
                     if line[-2] == '0':
@@ -48,9 +48,9 @@ class MR(data.Dataset):
     @classmethod
     def splits(cls, text_field, label_field, shuffle=True, **kwargs):
 
-        example1 = cls(text_field, label_field, path = 'train.fmt', **kwargs).examples
-        example2 = cls(text_field, label_field, path = 'dev.fmt', **kwargs).examples
-        example3 = cls(text_field, label_field, path = 'test.fmt', **kwargs).examples
+        example1 = cls(text_field, label_field, path='train.fmt', **kwargs).examples
+        example2 = cls(text_field, label_field, path='dev.fmt', **kwargs).examples
+        example3 = cls(text_field, label_field, path='test.fmt', **kwargs).examples
         if shuffle:
             random.shuffle(example1)
             random.shuffle(example2)
