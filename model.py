@@ -9,12 +9,12 @@ class  CNN_Text(nn.Module):
         super(CNN_Text,self).__init__()
         self.args = args
         
-        V = args.embed_num
-        D = args.embed_dim
-        C = args.class_num
+        V = args.embed_num#37
+        D = args.embed_dim#128
+        C = args.class_num#
         Ci = 1
-        Co = args.kernel_num
-        Ks = args.kernel_sizes
+        Co = args.kernel_num#100
+        Ks = args.kernel_sizes#3,4,5
 
         self.embed = nn.Embedding(V, D)
         self.convs1 = [nn.Conv2d(Ci, Co, (K, D)) for K in Ks]
@@ -33,13 +33,20 @@ class  CNN_Text(nn.Module):
 
 
     def forward(self, x):
+        #x[1803 x 37]
         x = self.embed(x) # (N,W,D)
-        
+        #print(x)词向量[1803 x 37 x 128]
         if self.args.static:
             x = Variable(x)
-
+        #print(x)
         x = x.unsqueeze(1) # (N,Ci,W,D)
+        #print(x),#增加了一个维度1803  1 x 37 x 128
+
+        #x = F.relu(self.convs1[0](x))
+        #print(x)
+
         x = [F.relu(conv(x)).squeeze(3) for conv in self.convs1] #[(N,Co,W), ...]*len(Ks)
+
         x = [F.max_pool1d(i, i.size(2)).squeeze(2) for i in x] #[(N,Co), ...]*len(Ks)
         x = torch.cat(x, 1)
         '''

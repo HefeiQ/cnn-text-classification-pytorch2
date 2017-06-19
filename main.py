@@ -33,10 +33,10 @@ parser.add_argument('-device', type=int, default=-1, help='device to use for ite
 parser.add_argument('-no-cuda', action='store_true', default=False, help='disable the gpu' )
 # option
 #parser.add_argument('-snapshot', type=str, default=None, help='filename of model snapshot [default: None]')
-parser.add_argument('-snapshot', type=str, default="./snapshot/2017-06-18_16-39-47/snapshot_steps16500.pt", help='filename of model snapshot [default: None]')
-parser.add_argument('-predict', type=str, default="Hello my dear , I love you so much .", help='predict the sentence given')
-#parser.add_argument('-predict', type=str, default=None, help='predict the sentence given')
-parser.add_argument('-test', action='store_true', default=False, help='train or test')
+parser.add_argument('-snapshot', type=str, default="./snapshot/2017-06-18_16-39-47/snapshot_steps16000.pt", help='filename of model snapshot [default: None]')
+#parser.add_argument('-predict', type=str, default="Hello my dear , I love you so much .", help='predict the sentence given')
+parser.add_argument('-predict', type=str, default=None, help='predict the sentence given')
+parser.add_argument('-test', action='store_true', default=True, help='train or test')
 args = parser.parse_args()
 
 

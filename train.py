@@ -79,7 +79,7 @@ def predict(text, model, text_field, label_feild):
     text = [[text_field.vocab.stoi[x] for x in text]]
     x = text_field.tensor_type(text)
     x = autograd.Variable(x, volatile=True)
-    print(x)
+    #print(x)
     output = model(x)
     _, predicted = torch.max(output, 1)
     return label_feild.vocab.itos[predicted.data[0][0]+1]
