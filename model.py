@@ -42,19 +42,27 @@ class  CNN_Text(nn.Module):
         x = x.unsqueeze(1) # (N,Ci,W,D)
         #print(x),#增加了一个维度1803  1 x 37 x 128
 
-        #x = F.relu(self.convs1[0](x))
-        #print(x)
+        #x = F.relu(self.convs1[0](x)).squeeze(3)
+        #print(x)#会得到[1803 x 100 x 35 x 1][1803 x 100 x 34 x 1][1803 x 100 x 33 x 1]
 
         x = [F.relu(conv(x)).squeeze(3) for conv in self.convs1] #[(N,Co,W), ...]*len(Ks)
+        #print(x)#[1803 x 100 x 35][1803 x 100 x 34][1803 x 100 x 33]
+
+        # print(x[0].size(2))
+        # x = F.max_pool1d(x[0],x[0].size(2)).squeeze(2)
+        # print(x)
 
         x = [F.max_pool1d(i, i.size(2)).squeeze(2) for i in x] #[(N,Co), ...]*len(Ks)
-        x = torch.cat(x, 1)
+        #[1803 x 100][1803 x 100][1803 x 100]
+        x = torch.cat(x, 1)#[1803 x 300]
+        #print(x)
+
         '''
         x1 = self.conv_and_pool(x,self.conv13) #(N,Co)
         x2 = self.conv_and_pool(x,self.conv14) #(N,Co)
         x3 = self.conv_and_pool(x,self.conv15) #(N,Co)
         x = torch.cat((x1, x2, x3), 1) # (N,len(Ks)*Co)
         '''
-        x = self.dropout(x) # (N,len(Ks)*Co)
-        logit = self.fc1(x) # (N,C)
+        x = self.dropout(x) # (N,len(Ks)*Co)[1803 x 300]
+        logit = self.fc1(x) # (N,C)[1803 x 2]
         return logit
